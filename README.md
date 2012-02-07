@@ -1,3 +1,3 @@
-pacpill
+pokey
 =======
-A pacman wrapper.
+A pacman wrapper in the spirit of Clyde.

@@ -1,8 +1,8 @@
 include $(GOROOT)/src/Make.inc
 
-TARG=pacpill
+TARG=pokey
 GOFILES=\
-	pacpill.go\
+	pokey.go\
 	flags.go
 
 include $(GOROOT)/src/Make.cmd
