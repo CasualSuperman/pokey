@@ -2,16 +2,37 @@ package main
 
 import (
 	"fmt"
-	"flag"
+	"io"
+	"os"
 	"os/exec"
 )
 
-flag.Usage = func() {
+func main() {
+	uid := os.Geteuid()
+	var prog *exec.Cmd
 
+	if uid == 1 {
+		prog = runAsRoot()
+	} else {
+		prog = runAsUser()
+	}
+
+	stdout, _ := prog.StdoutPipe()
+	stderr, _ := prog.StderrPipe()
+
+	go io.Copy(os.Stdout, stdout)
+	go io.Copy(os.Stderr, stderr)
+
+	err := prog.Run()
+	if err != nil {
+		fmt.Println(err.Error(), err)
+	}
 }
 
-func main() {
-	fmt.Println("Runing pacman.")
-	flag.Parse()
-	exec.Command("pacman", flag.Args()...)
+func runAsRoot() *exec.Cmd {
+	return exec.Command("pacman", os.Args[1:]...)
+}
+
+func runAsUser() *exec.Cmd {
+	return exec.Command("sudo", append([]string{"--", "pacman"}, os.Args[1:]...)...)
 }
